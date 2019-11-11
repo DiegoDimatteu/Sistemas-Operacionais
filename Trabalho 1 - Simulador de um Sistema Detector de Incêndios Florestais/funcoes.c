@@ -1,8 +1,13 @@
 #include "funcoes.h"
 
+typedef struct dados{
+	int incendio_x, incendio_y, id;
+	int x,y;
+}dados;
 
 void preencher_matriz(char floresta[MAX][MAX]){
-	int count_i = 1, count_j = 1, i, j;
+	int count_i = 1, count_j = 1, i, j, k = 0;
+	dados dado[100];
 	char count = 1;
 	for(i = 0; i < MAX; i++){
 		for(j = 0; j < MAX; j++){
@@ -10,6 +15,10 @@ void preencher_matriz(char floresta[MAX][MAX]){
 				floresta[i][j] = 'T';
 				count++;
 				count_j = 0;
+				dado[k].x = i;
+				dado[k].y = j;
+				pthread_create(&lista_threads[k], NULL, identificar, &dado[k]);
+				pthread_join(lista_threads[k], NULL);
 			}
 			else{
 				floresta[i][j] = '-';
@@ -51,25 +60,27 @@ void *imprimir_matriz(void *arg){
 
 }
 
-/*void *imprimir_matriz(void *arg){
-	char (*floresta)[MAX][MAX] = arg;
+void *identificar(void *args){
+	dados *dado = args;
 	int i, j;
-	char buff[100];
-	while(1){
-		sleep(1);
-		system("clear");
-		time_t now = time (0);
-		strftime (buff, 100, "%H:%M:%S", localtime (&now));
-		for(i = 0; i < MAX; i++){
-			for(j = 0; j < MAX; j++){
-				printf("%c ", (*floresta)[i][j]);
+	for(i = dados -> x - 1; i <= dados -> x + 1; i++){
+		for(j = dados -> j - 1; i <= dados -> j + 1; i++){
+			if(i == dados -> x && j == dados -> y{
+				continue;
 			}
-			printf("\n");
+			else if(floresta[i][j] == '@'){
+				fptr = fopen("incendios.log.txt", "a"); 
+				fprintf(fptr, "X = %d || Y = %d\n", dado -> x, dado -> y);
+				fclose(fptr);
+				(+2/3)
+			}
 		}
-		printf ("%s\n", buff);
 	}
+	/*fptr = fopen("incendios.log.txt", "a"); 
+	fprintf(fptr, "X = %d || Y = %d\n", dado -> x, dado -> y);
+	fclose(fptr);*/
 
-}*/
+}
 
 void *incendio(void *arg){
 	char (*floresta)[MAX][MAX] = arg;
@@ -82,9 +93,4 @@ void *incendio(void *arg){
 	}
 }
 
-//**************
-/*typedef struct informacoes{
-	int fogo = 0;
-	int posicao_i, posicao_j;
-};
-*/
+
