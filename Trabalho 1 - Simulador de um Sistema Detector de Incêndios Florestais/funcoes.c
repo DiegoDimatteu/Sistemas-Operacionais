@@ -33,19 +33,43 @@ void preencher_matriz(char floresta[MAX][MAX]){
 
 void *imprimir_matriz(void *arg){
 	char (*floresta)[MAX][MAX] = arg;
+	char buff[100];
 	int i, j;
 	while(1){
 		sleep(1);
 		system("clear");
+		time_t now = time (0);
+		strftime (buff, 100, "%H:%M:%S", localtime (&now));
 		for(i = 0; i < MAX; i++){
 			for(j = 0; j < MAX; j++){
 				printf("%c ", (*floresta)[i][j]);
 			}
 			printf("\n");
 		}
+		printf ("%s\n", buff);
 	}
 
 }
+
+/*void *imprimir_matriz(void *arg){
+	char (*floresta)[MAX][MAX] = arg;
+	int i, j;
+	char buff[100];
+	while(1){
+		sleep(1);
+		system("clear");
+		time_t now = time (0);
+		strftime (buff, 100, "%H:%M:%S", localtime (&now));
+		for(i = 0; i < MAX; i++){
+			for(j = 0; j < MAX; j++){
+				printf("%c ", (*floresta)[i][j]);
+			}
+			printf("\n");
+		}
+		printf ("%s\n", buff);
+	}
+
+}*/
 
 void *incendio(void *arg){
 	char (*floresta)[MAX][MAX] = arg;

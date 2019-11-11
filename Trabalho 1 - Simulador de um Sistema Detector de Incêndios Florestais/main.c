@@ -4,7 +4,7 @@ int main(){
 	srand(time(NULL));
 	pthread_t t1, t2;
 	int i = 0, j;
-	char floresta[MAX][MAX];
+	
 	preencher_matriz(floresta);
 	//imprimir_matriz(floresta);
 	printf("Holla!\n");

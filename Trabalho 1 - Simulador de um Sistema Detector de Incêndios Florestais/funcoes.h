@@ -8,7 +8,9 @@
 #include <unistd.h>
 #include <pthread.h>
 
-#define MAX 30 
+#define MAX 30
+
+char floresta[MAX][MAX];
 
 void preencher_matriz(char floresta[MAX][MAX]);
 void *imprimir_matriz(void *arg);
