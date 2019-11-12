@@ -1,6 +1,6 @@
 #include "funcoes.h"
 
-int qtd_m = 0, cnt_m = 0;
+int qtd_m = 0, cnt_m = 0, time_m = 0;
 
 typedef struct dados{
 	int incendio_x, incendio_y, id;
@@ -84,7 +84,11 @@ void *imprimir_matriz(void *arg){
 		printf ("%s\n", buff);
 		for(i = cnt_m; i < qtd_m; i++){
 			printf("Thread %d foi destruida!!\n", threads_mortas[i]);
-			cnt_m++;
+			time_m++;
+			if(time_m == 3){
+				cnt_m++;
+				time_m = 0;
+			}
 		}
 	}
 
