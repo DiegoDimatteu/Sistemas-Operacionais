@@ -10,7 +10,7 @@
 
 #define MAX 30
 
-char floresta[MAX][MAX];
+char floresta[MAX][MAX], threads_mortas[100];
 pthread_t mapa, queimada, lista_threads[100];
 FILE *fptr;
 
