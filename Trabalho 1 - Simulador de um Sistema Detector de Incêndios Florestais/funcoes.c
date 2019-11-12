@@ -82,15 +82,10 @@ void *imprimir_matriz(void *arg){
 			printf("\n");
 		}
 		printf ("%s\n", buff);
-		for(i = 0; i < qtd_m; i++){
-			printf("|| Thread %d foi destruida!! ", threads_mortas[i]);
-			cnt_m = i;
-			if (cnt_m % 4 == 0 && cnt_m != 0){
-				printf("||\n");
-				cnt_m = 0;
-			}
+		for(i = cnt_m; i < qtd_m; i++){
+			printf("Thread %d foi destruida!!\n", threads_mortas[i]);
+			cnt_m++;
 		}
-		printf("\n");
 	}
 
 }
