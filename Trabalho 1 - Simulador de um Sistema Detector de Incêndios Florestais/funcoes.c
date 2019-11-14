@@ -2,14 +2,11 @@
 
 int qtd_m = 0, cnt_m = 0, time_m = 0;
 
-typedef struct dados{
-	int incendio_x, incendio_y, id;
-	int x,y;
-}dados;
+
 
 void preencher_matriz(char floresta[MAX][MAX]){
 	int count_i = 1, count_j = 1, i, j, k = 0;
-	dados dado[100];
+	//dados dado[100];
 	char count = 1;
 	for(i = 0; i < MAX; i++){
 		for(j = 0; j < MAX; j++){
@@ -19,8 +16,9 @@ void preencher_matriz(char floresta[MAX][MAX]){
 				count_j = 0;
 				dado[k].x = i;
 				dado[k].y = j;
-				/*pthread_create(&lista_threads[k], NULL, identificar, &dado[k]);
-				pthread_join(lista_threads[k], NULL);*/
+				pthread_create(&lista_threads[k], NULL, identificar, &dado[k]);
+				//pthread_join(lista_threads[k], NULL);
+				k++;
 			}
 			else{
 				floresta[i][j] = '-';
@@ -42,7 +40,7 @@ void preencher_matriz(char floresta[MAX][MAX]){
 	}
 }
 
-void *imprimir_matriz(void *arg){
+/*void *imprimir_matriz(void *arg){
 	char (*floresta)[MAX][MAX] = arg;
 	char buff[100];
 	int i, j;
@@ -84,6 +82,64 @@ void *imprimir_matriz(void *arg){
 		printf ("%s\n", buff);
 		for(i = cnt_m; i < qtd_m; i++){
 			printf("Thread %d foi destruida!!\n", threads_mortas[i]);
+			time_m	++;
+			if(time_m == 3){
+				cnt_m++;
+				time_m = 0;
+			}
+		}
+	}
+
+}
+*/
+
+void *imprimir_matriz(void *arg){
+	//char (*floresta)[MAX][MAX] = arg;
+	char buff[100];
+	int i, j;
+	while(1){
+		sleep(1);
+		system("clear");
+		time_t now = time (0);
+		strftime (buff, 100, "%H:%M:%S", localtime (&now));
+		for(i = 0; i < 30; i++){
+			if(i == 0){
+				printf("   0%d ", i + 1);
+			}
+			else{
+				if (i < 9){
+					printf("0%d ", i + 1);
+				}
+				else{
+					printf("%d ", i + 1);
+				}
+			}
+			
+		}
+		printf("\n");
+		for(i = 0; i < MAX; i++){
+			for(j = 0; j < MAX; j++){
+				if(j == 0){
+					if (i < 9){
+						printf("0%d ",i + 1);
+					}
+					else{
+						printf("%d ",i + 1);
+					}
+					
+				}
+				if(floresta[i][j] == '#'){
+          			printf(" @ ");
+        		}
+        		else{
+         	 		printf(" %c ", (floresta)[i][j]);
+        		}
+			}
+			printf("\n");
+		}
+		printf ("%s\n", buff);
+		for(i = cnt_m; i < qtd_m; i++){
+			printf("Thread %d foi destruida!!\n", threads_mortas[i]);
 			time_m++;
 			if(time_m == 3){
 				cnt_m++;
@@ -94,6 +150,55 @@ void *imprimir_matriz(void *arg){
 
 }
 
+void *identificar(void *args)
+{
+	int id;
+	dados *dado = args;
+	int i, j, c=0;
+  	char buff[100], mensagem[100];
+  	while(1){
+    	time_t now = time (0);
+    	strftime (buff, 100, "%H:%M:%S", localtime (&now));
+    	for(i = (dado -> x) - 1; i <= (dado -> x) + 1; i++){
+      		for(j = (dado -> y) - 1; j <= (dado -> y) + 1; j++){
+      			if(i != dado -> x && j != dado -> y){
+	        		if(floresta[i][j] == '@' && dado -> condicional == 0){
+				        floresta[i][j] = '#';
+			          	id = (10 * (((i + 2)/3) - 1)) + ((j + 2)/3);
+			          	dado -> incendio_x = i;
+			          	dado -> incendio_y = j;
+			          	dado -> condicional = 1;
+			          	if(dado -> x = 1 || dado -> x = 28 || dado -> y = 1 || dado -> y = 28){ //Se a condicional for aceita significa que a Thread está na borda
+
+			          	}
+			          	
+			          	/*fptr = fopen("incendios.log.txt", "a");
+			          	fprintf(fptr, "Incendio -> X = %d || Y = %d\n", i, j);
+			          	fclose(fptr); */
+			        }
+        		}
+      		}
+   		}
+  	}
+}
+/*void *identificar(void *args)
+ {
+	dados *dado = args;
+	int i, j, a, b;
+  	a = dado->x;
+  	b = dado->y;
+	for(i = dado -> x - 1; i <= dado -> x + 1; i++){
+		for(j = dado -> y - 1; j <= dado -> y + 1; j++){
+			if(i != dado -> x && j != dado -> y){
+				if(floresta[i][j] == '@'){
+					fptr = fopen("incendios.log.txt", "a"); 
+					fprintf(fptr, "Incendio -> X = %d || Y = %d\n", i, j);
+					fclose(fptr);
+				}
+			}
+		}
+	}
+}*/
 /*void *identificar(void *args)
  {
 	dados *dado = args;
@@ -156,3 +261,15 @@ void *incendio(void *arg){
 }
 
 
+/*void* thread_central()
+{
+  while(1)
+  {
+
+    fptr = fopen("incendios.log.txt", "a"); 
+    fprintf(fptr, "salve");
+    fclose(fptr);
+    //bombeiro(mensagens->coord_x, mensagens->coord_y);
+    //retira(mensagens);
+  }
+}*/
