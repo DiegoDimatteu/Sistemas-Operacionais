@@ -9,7 +9,6 @@
 #include <pthread.h>
 #include <semaphore.h>
 #include <string.h>
-#include "fila.h"
 
 #define MAX 30
 
@@ -17,12 +16,11 @@ char floresta[MAX][MAX], threads_mortas[100];
 pthread_t mapa, queimada, central, lista_threads[100];
 FILE *fptr;
 sem_t mutex;
-//ndfila* mensagens;
 
 typedef struct dados{
 	int incendio_x, incendio_y, id;
 	int x,y;
-  char mensagem[100];
+  char mensagem[4][100];
 }dados;
 
 dados dado[100];

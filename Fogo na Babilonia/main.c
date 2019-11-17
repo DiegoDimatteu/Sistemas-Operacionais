@@ -6,9 +6,7 @@ int main(){
 	srand(time(NULL));
 	int k;
 
-	//Fila* mensagens = cria_fila();
 	preencher_matriz(floresta);
-	printf("Holla!\n");
 	pthread_create(&mapa, NULL, imprimir_matriz, NULL);
 	pthread_create(&queimada, NULL, incendio, &floresta);
   pthread_create(&central, NULL, thread_central,NULL);

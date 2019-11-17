@@ -160,7 +160,7 @@ void* thread_central()
         fprintf(fptr, "%s", dado[i].mensagem);
         fclose(fptr);
         strcpy(dado[i].mensagem, "");
-        dado
+        
       }
     //bombeiro(mensagens->coord_x, mensagens->coord_y);
     //retira(mensagens);
