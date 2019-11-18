@@ -1,23 +1,20 @@
 #include "funcoes.h"
 
-int qtd_m = 0, cnt_m = 0, time_m = 0;
+int qtd_m = 0, cnt_m = 0, time_m = 0, bomb = 0;
 
 
-
-void preencher_matriz(char floresta[MAX][MAX]){
+void preencher_matriz(char floresta[MAX][MAX]){ //preenche a matriz colocando os Ts em suas devidas posições
 	int count_i = 1, count_j = 1, i, j, k = 0;
-	//dados dado[100];
+	
 	char count = 1;
 	for(i = 0; i < MAX; i++){
 		for(j = 0; j < MAX; j++){
-			if(count_i == 2 && count_j == 2){
+			if(count_i == 2 && count_j == 2){//Coloca o t quando os contadores i e j forem iguais a 2
 				floresta[i][j] = 'T';
 				count++;
 				count_j = 0;
-				dado[k].x = i;
+				dado[k].x = i; //salva na struct de cada thread sua posição de origem
 				dado[k].y = j;
-				pthread_create(&lista_threads[k], NULL, identificar, &dado[k]);
-				//pthread_join(lista_threads[k], NULL);
 				k++;
 			}
 			else{
@@ -38,110 +35,60 @@ void preencher_matriz(char floresta[MAX][MAX]){
 			count_i++;
 		}
 	}
+  for(i = 0; i < 100; i++){
+   pthread_create(&lista_threads[i], NULL, identificar, NULL);//Cria o vetor de threads
+  }
 }
-
-/*void *imprimir_matriz(void *arg){
-	char (*floresta)[MAX][MAX] = arg;
-	char buff[100];
-	int i, j;
-	while(1){
-		sleep(1);
-		system("clear");
-		time_t now = time (0);
-		strftime (buff, 100, "%H:%M:%S", localtime (&now));
-		for(i = 0; i < 30; i++){
-			if(i == 0){
-				printf("   0%d ", i + 1);
-			}
-			else{
-				if (i < 9){
-					printf("0%d ", i + 1);
-				}
-				else{
-					printf("%d ", i + 1);
-				}
-			}
-			
-		}
-		printf("\n");
-		for(i = 0; i < MAX; i++){
-			for(j = 0; j < MAX; j++){
-				if(j == 0){
-					if (i < 9){
-						printf("0%d ",i + 1);
-					}
-					else{
-						printf("%d ",i + 1);
-					}
-					
-				}
-				printf(" %c ", (*floresta)[i][j]);
-			}
-			printf("\n");
-		}
-		printf ("%s\n", buff);
-		for(i = cnt_m; i < qtd_m; i++){
-			printf("Thread %d foi destruida!!\n", threads_mortas[i]);
-			time_m	++;
-			if(time_m == 3){
-				cnt_m++;
-				time_m = 0;
-			}
-		}
-	}
-
-}
-*/
 
 void *imprimir_matriz(void *arg){
-	//char (*floresta)[MAX][MAX] = arg;
 	char buff[100];
 	int i, j;
 	while(1){
 		sleep(1);
 		system("clear");
 		time_t now = time (0);
-		strftime (buff, 100, "%H:%M:%S", localtime (&now));
-		for(i = 0; i < 30; i++){
+		strftime (buff, 100, "%H:%M:%S", localtime (&now));//Guarda a string hora na variável buff
+		for(i = 0; i < 30; i++){//identa as linhas para os numeros meores que 10 terem um 0 antes
 			if(i == 0){
-				printf("   0%d ", i + 1);
+				printf("   0%d ", i);
 			}
 			else{
-				if (i < 9){
-					printf("0%d ", i + 1);
+				if (i <= 9){
+					printf("0%d ", i);
 				}
 				else{
-					printf("%d ", i + 1);
+					printf("%d ", i);
 				}
 			}
 			
 		}
 		printf("\n");
 		for(i = 0; i < MAX; i++){
-			for(j = 0; j < MAX; j++){
+			for(j = 0; j < MAX; j++){//identa as colunas para os numeros meores que 10 terem um 0 antes
 				if(j == 0){
-					if (i < 9){
-						printf("0%d ",i + 1);
+					if (i <= 9){
+						printf("0%d ",i);
 					}
 					else{
-						printf("%d ",i + 1);
+						printf("%d ",i);
 					}
 					
 				}
-				if(floresta[i][j] == '#'){
-          			printf(" @ ");
-        		}
-        		else{
-         	 		printf(" %c ", (floresta)[i][j]);
-        		}
+				if(floresta[i][j] == '#'){//Quando vê # coloca @ no mapa
+          printf(" @ ");
+          bomb ++;
+        }
+        else{
+          printf(" %c ", (floresta)[i][j]);
+        }
 			}
 			printf("\n");
 		}
-		printf ("%s\n", buff);
+		printf ("%s\n", buff);//Imprime o horário em baixo do mapa
 		for(i = cnt_m; i < qtd_m; i++){
-			printf("Thread %d foi destruida!!\n", threads_mortas[i]);
+			printf("Thread %d foi destruida!!\n", threads_mortas[i]);//imprime a thread que morreu
 			time_m++;
-			if(time_m == 3){
+			if(time_m == 3){//Faz com que ela fique 3s no mapa
 				cnt_m++;
 				time_m = 0;
 			}
@@ -150,110 +97,27 @@ void *imprimir_matriz(void *arg){
 
 }
 
-void *identificar(void *args)
+void *incendio(void *arg)
 {
-	int id;
-	dados *dado = args;
-	int i, j, c=0;
-  	char buff[100], mensagem[100];
-  	while(1){
-    	time_t now = time (0);
-    	strftime (buff, 100, "%H:%M:%S", localtime (&now));
-    	for(i = (dado -> x) - 1; i <= (dado -> x) + 1; i++){
-      		for(j = (dado -> y) - 1; j <= (dado -> y) + 1; j++){
-      			if(i != dado -> x && j != dado -> y){
-	        		if(floresta[i][j] == '@' && dado -> condicional == 0){
-				        floresta[i][j] = '#';
-			          	id = (10 * (((i + 2)/3) - 1)) + ((j + 2)/3);
-			          	dado -> incendio_x = i;
-			          	dado -> incendio_y = j;
-			          	dado -> condicional = 1;
-			          	if(dado -> x = 1 || dado -> x = 28 || dado -> y = 1 || dado -> y = 28){ //Se a condicional for aceita significa que a Thread está na borda
-
-			          	}
-			          	
-			          	/*fptr = fopen("incendios.log.txt", "a");
-			          	fprintf(fptr, "Incendio -> X = %d || Y = %d\n", i, j);
-			          	fclose(fptr); */
-			        }
-        		}
-      		}
-   		}
-  	}
-}
-/*void *identificar(void *args)
- {
-	dados *dado = args;
-	int i, j, a, b;
-  	a = dado->x;
-  	b = dado->y;
-	for(i = dado -> x - 1; i <= dado -> x + 1; i++){
-		for(j = dado -> y - 1; j <= dado -> y + 1; j++){
-			if(i != dado -> x && j != dado -> y){
-				if(floresta[i][j] == '@'){
-					fptr = fopen("incendios.log.txt", "a"); 
-					fprintf(fptr, "Incendio -> X = %d || Y = %d\n", i, j);
-					fclose(fptr);
-				}
-			}
-		}
-	}
-}*/
-/*void *identificar(void *args)
- {
-	dados *dado = args;
-	int i, j;
-	for(i = (dado -> x) - 1; i <= (dado -> x) + 1; i++){
-		for(j = (dado -> y) - 1; j <= (dado -> y) + 1; j++){
-			if(i != dado -> x && j != dado -> y){
-				fptr = fopen("incendios.log.txt", "a"); 
-				fprintf(fptr, "floresta[i][j] == %c\n", floresta[i][j]);
-				fclose(fptr);
-				if(floresta[i][j] == '@'){
-					fptr = fopen("incendios.log.txt", "a"); 
-					fprintf(fptr, "Incandio -> X = %d || Y = %d\n", i, j);
-					fclose(fptr);
-				}
-			}
-		}
-	}
-}*/
-/*void *identificar(void *args){
-	dados *dado = args;
-	int i, j;
-	for(i = dados -> x - 1; i <= dados -> x + 1; i++){
-		for(j = dados -> j - 1; i <= dados -> j + 1; i++){
-			if(i != dados -> x && j != dados -> y){
-				if(floresta[i][j] == '@'){
-					fptr = fopen("incendios.log.txt", "a"); 
-					fprintf(fptr, "X = %d || Y = %d\n", dado -> x, dado -> y);
-					fclose(fptr);
-					(+2/3)
-				}
-			}
-		}
-	}
-	fptr = fopen("incendios.log.txt", "a"); 
-	fprintf(fptr, "X = %d || Y = %d\n", dado -> x, dado -> y);
-	fclose(fptr);
-
-}*/
-
-void *incendio(void *arg){
 	char (*floresta)[MAX][MAX] = arg;
-	int id;
-	while(1){
+	int num;
+	while(1)
+  {
 		sleep(3);
-		int i = rand() % MAX;
+		int i = rand() % MAX;//gera um valor de i e j aleatório
 		int j = rand() % MAX;
-		if ((*floresta)[i][j] == 'T'){
-			id = (10 * (((i + 2)/3) - 1)) + ((j + 2)/3);
-			(*floresta)[i][j] = 'K';
-			threads_mortas[qtd_m] = id;
+		if ((*floresta)[i][j] == 'T'){//Se for thread ela mata a thread
+			num = (10 * (((i + 2)/3) - 1)) + ((j + 2)/3);
+      dado[num - 1].morta = 1;
+			(*floresta)[i][j] = 'X';
+			threads_mortas[qtd_m] = num;
 			qtd_m++;
+      fptr = fopen("incendios.log.txt", "a"); 
+      fprintf(fptr, "Thread %d morreu\n", num);
+      fclose(fptr);
 		}
 		else{
-			(*floresta)[i][j] = '@';
+			(*floresta)[i][j] = '@';//Coloca @ no lugar do incêndio
 		}
 		
 		printf("\n");
@@ -261,15 +125,144 @@ void *incendio(void *arg){
 }
 
 
-/*void* thread_central()
+void *identificar()
 {
-  while(1)
-  {
-
-    fptr = fopen("incendios.log.txt", "a"); 
-    fprintf(fptr, "salve");
-    fclose(fptr);
-    //bombeiro(mensagens->coord_x, mensagens->coord_y);
-    //retira(mensagens);
+  int i, j, t, num;
+  char buff[100];
+  while(1){
+    time_t now = time (0);
+    strftime (buff, 100, "%H:%M:%S", localtime (&now));//Guarda a string hora na variável buff
+    for(t = 0; t < 100; t++){
+      for(i = (dado[t].x) - 1; i <= (dado[t].x) + 1; i++){
+        for(j = (dado[t].y) - 1; j <= (dado[t].y) + 1; j++){
+          if(floresta[i][j] == '@' && dado[t].condicional == 0 && dado[t].morta == 0){//Se ela não tiver dado armazedado internamente, não estiver morta e tiver achado um icendio
+            floresta[i][j] = '#';                                                        //ela armazena os dados na sua struct
+            num = (10 * ((((dado[t].x) + 2)/3) - 1)) + (((dado[t].y) + 2)/3);
+            dado[t].id = num;
+            dado[t].incendio_x = i;
+            dado[t].incendio_y = j;
+            dado[t].condicional = 1;
+            strcpy(dado[t].hora, buff);
+            if(dado[t].x != 1 && dado[t].x != 28 && dado[t].y != 1 && dado[t].y != 28){//se a thread não estiver na borda ela passa para as outras threads ao redor
+              dado[t].condicional = 0;//limpa sua condicional para receber mais dados
+              passagem(t, num-2, num, num + 9, num - 11);//as quatro threads ao redor
+            }
+          }
+        }
+      }
+    }
+  sleep(1);//Espera 1s para fazer a verificação conforme o trabalho pede
   }
-}*/
+}
+
+void passagem(int atual, int a, int b, int c, int d){//passagem por forma recursiva
+  int num, env_x, env_y;
+  env_x = dado[atual].x;
+  env_y = dado[atual].y;
+  dado[atual].envio_x = 100;//valor colocado para que a thread atual(a que enviou para as vizinhas, após o envio esteja livre para receber dados de outra thread)
+  dado[atual].envio_y = 100;
+  if((dado[a].condicional == 0) && (dado[a].morta == 0) && (dado[a].envio_x != dado[atual].x) && (dado[a].envio_y != dado[atual].y) && floresta[dado[atual].incendio_x][dado[atual].incendio_y] == '#'){
+    num = (10 * ((((dado[a].x) + 2)/3) - 1)) + (((dado[a].y) + 2)/3);
+    dado[a].id = dado[atual].id;
+    dado[a].incendio_x = dado[atual].incendio_x;
+    dado[a].incendio_y = dado[atual].incendio_y;
+    strcpy(dado[num-1].hora,dado[atual].hora);
+    dado[a].envio_x = env_x;
+    dado[a].envio_y = env_y;
+    dado[a].condicional = 1;
+    if(dado[a].x != 1 && dado[a].x != 28 && dado[a].y != 1 && dado[a].y != 28){
+      dado[a].condicional = 0;
+      passagem(a, num - 2, num, num + 9, num - 11);
+    }
+  }
+  if(dado[b].condicional == 0 && dado[b].morta == 0 && dado[b].envio_x != dado[atual].x && dado[b].envio_y != dado[atual].y && floresta[dado[atual].incendio_x][dado[atual].incendio_y] == '#'){
+    num = (10 * ((((dado[b].x) + 2)/3) - 1)) + (((dado[b].y) + 2)/3);
+    dado[b].id = dado[atual].id;
+    dado[b].incendio_x = dado[atual].incendio_x;
+    dado[b].incendio_y = dado[atual].incendio_y;
+    strcpy(dado[b].hora,dado[atual].hora);
+    dado[b].envio_x = env_x;
+    dado[b].envio_y = env_y;
+    dado[b].condicional = 1;
+    if(dado[b].x != 1 && dado[b].x != 28 && dado[b].y != 1 && dado[b].y != 28){
+      dado[b].condicional = 0;
+      passagem(b, num - 2, num, num + 9, num - 11);
+    }
+  }
+  if(dado[c].condicional == 0 && dado[c].morta == 0 && dado[c].envio_x != dado[atual].x && dado[c].envio_y != dado[atual].y && floresta[dado[atual].incendio_x][dado[atual].incendio_y] == '#'){
+    num = (10 * ((((dado[c].x) + 2)/3) - 1)) + (((dado[c].y) + 2)/3);
+    dado[c].id = dado[atual].id;
+    dado[c].incendio_x = dado[atual].incendio_x;
+    dado[c].incendio_y = dado[atual].incendio_y;
+    strcpy(dado[c].hora,dado[atual].hora);
+    dado[c].envio_x = env_x;
+    dado[c].envio_y = env_y;
+    dado[c].condicional = 1;
+    if(dado[c].x != 1 && dado[c].x != 28 && dado[c].y != 1 && dado[c].y != 28){
+      dado[c].condicional = 0;
+      passagem(c, num - 2, num, num + 9, num - 11);
+    }
+  }
+  if(dado[d].condicional == 0 && dado[d].morta == 0 && dado[d].envio_x != dado[atual].x && dado[d].envio_y != dado[atual].y && floresta[dado[atual].incendio_x][dado[atual].incendio_y] == '#'){
+    num = (10 * ((((dado[d].x) + 2)/3) - 1)) + (((dado[d].y) + 2)/3);
+    dado[d].id = dado[atual].id;
+    dado[d].incendio_x = dado[atual].incendio_x;
+    dado[d].incendio_y = dado[atual].incendio_y;
+    strcpy(dado[num-1].hora,dado[atual].hora);
+    dado[d].envio_x = env_x;
+    dado[d].envio_y = env_y;
+    dado[d].condicional = 1;
+    if(dado[d].x != 1 && dado[d].x != 28 && dado[d].y != 1 && dado[d].y != 28){
+      dado[d].condicional = 0;
+      passagem(d, num - 2, num, num + 9, num - 11);
+    }
+  }
+}
+
+
+void *thread_central()//faz a verificação constantemente para que qualquer thread da borda que identificou o icendio possa chamar bombeiro
+{
+  int i, j, num;
+  while(1)
+  { 
+    for(i = 1; i < 29; i += 27){
+      for(j = 1; j < 29; j += 3){
+        num = (10 * (((i + 2)/3) - 1)) + ((j + 2)/3);
+        if(floresta[dado[num - 1].incendio_x][dado[num - 1].incendio_y] == '#' && dado[num - 1].morta == 0 && dado[num - 1].condicional == 1){
+          fptr = fopen("incendios.log.txt", "a"); 
+          fprintf(fptr, "A thread %d detectou um incendio na posicao [%d][%d] as %s\n", dado[num - 1].id, dado[num - 1].incendio_x, dado[num - 1].incendio_y, dado[num - 1].hora);
+          fclose(fptr);//escreve mendsagem antes de chamar bmbeiro
+          bombeiro(dado[num - 1].incendio_x, dado[num - 1].incendio_y);
+          }
+          dado[num - 1].condicional = 0;
+          dado[num - 1].envio_x = 100;
+          dado[num - 1].envio_y = 100;
+      }
+
+    }
+    for(j = 1; j < 29; j += 27){
+      for(i = 1; i < 29; i += 3){
+        num = (10 * (((i + 2)/3) - 1)) + ((j + 2)/3);
+        if(floresta[dado[num - 1].incendio_x][dado[num - 1].incendio_y] == '#' && dado[num - 1].morta == 0 && dado[num - 1].condicional == 1){
+          
+          fptr = fopen("incendios.log.txt", "a"); 
+          fprintf(fptr, "A thread %d detectou um incendio na posicao [%d][%d] as %s\n", dado[num - 1].id, dado[num - 1].incendio_x, dado[num - 1].incendio_y, dado[num - 1].hora);
+          fclose(fptr);
+          
+          bombeiro(dado[num - 1].incendio_x, dado[num - 1].incendio_y);        
+        }
+        dado[num - 1].condicional = 0;
+        dado[num - 1].envio_x = 100;
+        dado[num - 1].envio_y = 100;
+      }
+    }
+  }
+}
+
+void bombeiro(int x, int y)
+{
+    fptr = fopen("incendios.log.txt", "a"); 
+    fprintf(fptr, "Bombeiro apagou o incendio na posicao [%d][%d]\n", x, y);
+    fclose(fptr);
+    floresta[x][y] = '-' ;
+}
