@@ -19,8 +19,9 @@ sem_t mutex;
 
 typedef struct dados{
 	int incendio_x, incendio_y, id;
-	int x,y;
-  char mensagem[4][100];
+	int x, y, morta, condicional;
+  char hora[100];
+  //char mensagem[4][100];
 }dados;
 
 dados dado[100];
@@ -31,7 +32,8 @@ void preencher_matriz(char floresta[MAX][MAX]);
 void *imprimir_matriz(void *arg);
 void *incendio(void *arg);
 void *identificar(void *args);
-void bombeiro(int x,int y);
-void* thread_central();
+void passagem(dados atual, dados a, dados b, dados c, dados d);
+void *thread_central();
+void bombeiro(int x, int y);
 
 #endif

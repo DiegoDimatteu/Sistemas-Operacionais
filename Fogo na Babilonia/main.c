@@ -1,6 +1,11 @@
 #include "funcoes.h"
 
 int main(){
+  int i;
+  for(i = 0; i < 101; i++){
+    dado[i].condicional = 0;
+    dado[i].morta = 0;
+  }
 	fptr = fopen("incendios.log.txt", "w"); 
 	fclose(fptr);
 	srand(time(NULL));
